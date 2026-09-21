@@ -5,6 +5,7 @@
 #include <string>
 using namespace std;
 
+
 class Jugador {
     private:
         int id;
@@ -35,13 +36,14 @@ class Jugador {
         void set_ataques(int);
         void set_errores(int);
 
-        // Funcion Directa: O(1)
+        // Funcion Directa O(1)
         int calcular_efectividad();
 
         void mostrar_info_completa();
         void mostrar_resumen();
 };
 
+// Desarrollo de los métodos
 Jugador::Jugador() {
     id = 0;
     nombre = "";
@@ -118,7 +120,7 @@ void Jugador::set_errores(int err) {
     errores = err;
 }
 
-// Funcion Directa: O(1)
+// Funcion Directa O(1)
 int Jugador::calcular_efectividad() {
     return ataques - errores;
 }
