@@ -30,13 +30,13 @@ int main() {
     miEquipo.ordenar_por_remate();
 
     cout << "\n\n" << endl;
-    cout << "ROSTER ORDENADO POR ALCANCE DE REMATE (MERGE SORT)" << endl;
+    cout << "ROSTER ORDENADO POR ALCANCE DE REMATE" << endl;
     cout << "" << endl;
     miEquipo.mostrar_resumen_jugadores();
 
     // Búsqueda Binaria O(log n)
     cout << "\n\n" << endl;
-    cout << "BUSQUEDA BINARIA POR ID" << endl;
+    cout << "BUSQUEDA POR ID" << endl;
     cout << "" << endl;
     int id_a_buscar = 103;
     int posicion = miEquipo.buscar_por_id(id_a_buscar);
@@ -48,13 +48,13 @@ int main() {
 
     // Búsqueda Secuencial O(n)
     cout << "\n\n" << endl;
-    cout << "BUSQUEDA SECUENCIAL POR POSICION" << endl;
+    cout << "BUSQUEDA POR POSICION" << endl;
     cout << "" << endl;
     miEquipo.filtrar_por_posicion("Central");
 
     // Función Iterativa O(n)
     cout << "\n" << endl;
-    cout << "METRICA DEL EQUIPO (FUNCION ITERATIVA)" << endl;
+    cout << "METRICA DEL EQUIPO" << endl;
     cout << "" << endl;
     cout << "Promedio de altura de bloqueo: " 
          << miEquipo.promedio_altura_bloqueo() << " cm" << endl;
