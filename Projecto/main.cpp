@@ -8,7 +8,7 @@ using namespace std;
 int main() {
     Equipo miEquipo("Borregos Voleibol", "Universitaria");
 
-    // Registro de jugadores (mismo esquema simple que uso tu companera con registrar_obra)
+    // Registro de jugadores
     miEquipo.registrar_jugador(Jugador(101, "Wilfredo_Leon", "Receptor", 345, 370, 45, 8));
     miEquipo.registrar_jugador(Jugador(102, "Lucas_Saatkamp", "Central", 340, 355, 30, 3));
     miEquipo.registrar_jugador(Jugador(103, "Yuji_Nishida", "Opuesto", 330, 350, 50, 12));
@@ -20,7 +20,7 @@ int main() {
     cout << "" << endl;
     miEquipo.mostrar_roster();
 
-    // 1. Aplicar Algoritmo de Ordenamiento: Merge Sort O(n log n)
+    // Merge Sort O(n log n)
     miEquipo.ordenar_por_remate();
 
     cout << "\n\n" << endl;
@@ -28,7 +28,7 @@ int main() {
     cout << "" << endl;
     miEquipo.mostrar_resumen_jugadores();
 
-    // 2. Aplicar Algoritmo de Busqueda Binaria: O(log n)
+    // Busqueda Binaria O(log n)
     cout << "\n\n" << endl;
     cout << "BUSQUEDA BINARIA POR ID" << endl;
     cout << "" << endl;
@@ -40,13 +40,13 @@ int main() {
         cout << "Jugador no encontrado." << endl;
     }
 
-    // 3. Aplicar Busqueda Secuencial: O(n)
+    // Busqueda Secuencial O(n)
     cout << "\n\n" << endl;
     cout << "BUSQUEDA SECUENCIAL POR POSICION" << endl;
     cout << "" << endl;
     miEquipo.filtrar_por_posicion("Central");
 
-    // 4. Funcion Iterativa: O(n)
+    // Funcion Iterativa O(n)
     cout << "" << endl;
     cout << "METRICA DEL EQUIPO (FUNCION ITERATIVA)" << endl;
     cout << "" << endl;
