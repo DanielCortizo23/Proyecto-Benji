@@ -1,7 +1,7 @@
 # Catálogo de Jugadores de Voleibol
 
 Este programa funciona como un registro de los jugadores que integran un equipo de Voleibol, en el cuál se lleva un registro de la información de cada jugador y se puede desplegar un catálogo con los jugadores ordenados por su alcance de remate.
-* ID[
+* ID
 * Nombre
 * Posición
 * Bloqueo
