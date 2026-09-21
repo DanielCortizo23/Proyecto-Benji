@@ -1,1 +1,24 @@
-Sistema de Roster y Rendimiento para Equipos de VoleibolEste programa funciona como un sistema de gestión y análisis para el cuerpo técnico de un equipo de voleibol. Permite registrar las métricas físicas y de rendimiento de los jugadores, consultar el roster y generar clasificaciones de acuerdo con su alcance de salto en la red:   ID   NombrePosición en canchaAlcance de bloqueo en cmAlcance de remate en cmEfectividad neta de ataqueSICT0302: Toma DecisionesSelección de Estructura de DatosUtilicé un vector para guardar la lista de los jugadores. Esta estructura permite un acceso directo y rápido a cualquier posición en memoria, lo que ayuda a que la Búsqueda Binaria y el ordenamiento Merge Sort puedan dividir los elementos a la mitad eficientemente.   Algoritmo de Ordenamiento Seleccionado: MergeSortEl cuerpo técnico requiere evaluar a los jugadores según su alcance de remate para definir la alineación titular. Seleccioné el algoritmo de ordenamiento Merge Sort porque garantiza una velocidad constante de O(n log n) en el mejor, promedio y peor de los casos, a diferencia de Bubble Sort que tarda O(n al cuadrado) o QuickSort que puede volverse lento si la elección del pivote no es favorable.   Algoritmos de Búsqueda SeleccionadosBúsqueda Binaria: Se usa para localizar a un jugador por su número de ID dividiendo la lista a la mitad de forma recursiva con una rapidez de O(log n).   Búsqueda Secuencial: Se usa para recorrer la lista completa y filtrar a todos los jugadores que pertenezcan a una misma posición con una rapidez de O(n).   SICT0301: Evalúa los componentesAnálisis de Complejidad:Función Directa (calcular efectividad): Complejidad de O(1), ya que realiza una resta simple entre ataques y errores en un solo paso sin usar ciclos.   Función Iterativa (promedio altura bloqueo): Complejidad de O(n), debido a que recorre a los jugadores uno por uno mediante un ciclo for para sumar sus estaturas de bloqueo.   Función Recursiva (búsqueda binaria): Complejidad de O(log n), ya que en cada paso divide el rango de búsqueda a la mitad de forma recursiva.   Algoritmo de Ordenamiento (Merge Sort): Complejidad de O(n log n) en todos los casos, dividiendo el vector en mitades recursivas y realizando una mezcla lineal.   Búsqueda Secuencial (filtrar por posición): Complejidad de O(n), pues revisa linealmente a cada jugador para ver si coincide con la posición buscada.   SICT0303: Implementa acciones científicasUtilizo dos clases llamadas Jugador y Equipo, junto con un vector que almacena los datos de los atletas. El programa permite registrar a los jugadores, procesar sus estadísticas y aplicar algoritmos de ordenamiento y búsqueda para la toma de decisiones deportivas.   SEG0701: Cultura digital   Utilizo un programa computacional para digitalizar el seguimiento deportivo, facilitando el análisis objetivo del rendimiento y la toma de decisiones tácticas en un equipo de voleibol.   
+# Catálogo de Jugadores de Voleibol
+
+Este programa funciona como un registro de los jugadores que integran un equipo de Voleibol, en el cuál se lleva un registro de la información de cada jugador y se puede desplegar un catálogo con los jugadores ordenados por su alcance de remate.
+* ID[
+* Nombre
+* Posición
+* Bloqueo
+* Remate
+* Ataques
+* Errores
+
+## SICT0302: Toma Decisiones
+#### Algoritmo de Ordenamiento Seleccionado: MergeSort
+La cantidad de jugadores que se evalúan en un equipo puede ir aumentando con el tiempo, por lo que generalmente el registro de jugadores es muy largo. Seleccioné el algoritmo de ordenamiento MergeSort porque mantiene una velocidad constante en todos los casos a diferencia de otros y es eficiente con una gran cantidad de datos.
+
+## SICT0301: Evalúa los componentes.
+#### Complejidad:
+La complejidad del MergeSort es de O(nlogn), es decir mantiene un funcionamiento rápido y eficiente conforme va aumentando la cantidad de datos con los que trabaja.
+
+## SICT0303: Implementa acciones científicas.
+Utilizo dos clases: Jugador.h y Equipo.h y un vector que guarda objetos tipo Jugador. El programa lee el registro de los jugadores y lo ordena utilizando el algoritmo MergeSort.
+
+## SEG0701: Cultura digital.
+Utilizo un programa computacional para facilitar el proceso de llevar un registro de atletas y manejar un catálogo.
