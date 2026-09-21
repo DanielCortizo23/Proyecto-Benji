@@ -15,23 +15,23 @@ int main() {
     miEquipo.registrar_jugador(Jugador(104, "Simone_Giannelli", "Colocador", 320, 335, 10, 2));
     miEquipo.registrar_jugador(Jugador(105, "Robertlandy_Simon", "Central", 355, 384, 38, 4));
 
-    cout << "\n=============================================" << endl;
+    cout << "\n\n" << endl;
     cout << "ROSTER SIN ORDENAR" << endl;
-    cout << "=============================================" << endl;
+    cout << "" << endl;
     miEquipo.mostrar_roster();
 
     // 1. Aplicar Algoritmo de Ordenamiento: Merge Sort O(n log n)
     miEquipo.ordenar_por_remate();
 
-    cout << "\n\n=============================================" << endl;
+    cout << "\n\n" << endl;
     cout << "ROSTER ORDENADO POR ALCANCE DE REMATE (MERGE SORT)" << endl;
-    cout << "=============================================" << endl;
+    cout << "" << endl;
     miEquipo.mostrar_resumen_jugadores();
 
     // 2. Aplicar Algoritmo de Busqueda Binaria: O(log n)
-    cout << "\n\n=============================================" << endl;
+    cout << "\n\n" << endl;
     cout << "BUSQUEDA BINARIA POR ID" << endl;
-    cout << "=============================================" << endl;
+    cout << "" << endl;
     int id_a_buscar = 103;
     int posicion = miEquipo.buscar_por_id(id_a_buscar);
     if (posicion != -1) {
@@ -41,15 +41,15 @@ int main() {
     }
 
     // 3. Aplicar Busqueda Secuencial: O(n)
-    cout << "\n\n=============================================" << endl;
+    cout << "\n\n" << endl;
     cout << "BUSQUEDA SECUENCIAL POR POSICION" << endl;
-    cout << "=============================================" << endl;
+    cout << "" << endl;
     miEquipo.filtrar_por_posicion("Central");
 
     // 4. Funcion Iterativa: O(n)
-    cout << "\n\n=============================================" << endl;
+    cout << "" << endl;
     cout << "METRICA DEL EQUIPO (FUNCION ITERATIVA)" << endl;
-    cout << "=============================================" << endl;
+    cout << "" << endl;
     cout << "Promedio de altura de bloqueo: " 
          << miEquipo.promedio_altura_bloqueo() << " cm" << endl;
 
