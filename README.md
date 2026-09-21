@@ -11,10 +11,10 @@ Este programa funciona como un sistema de gestión y análisis para el cuerpo t�
 ## SICT0302: Toma Decisiones
 
 #### Selección de Estructura de Datos
-Utilicé un vector dinámico (`vector<Jugador>`) porque los jugadores están indexados y se requiere acceso directo por posición en memoria contigua en tiempo $O(1)$ para que la Búsqueda Binaria y el Merge Sort puedan dividir el arreglo a la mitad eficientemente.
+Utilicé un vector dinámico porque los jugadores están indexados y se requiere acceso directo por posición en memoria contigua en tiempo O(1) para que la Búsqueda Binaria y el Merge Sort puedan dividir el arreglo a la mitad eficientemente.
 
 #### Algoritmo de Ordenamiento Seleccionado: MergeSort
-El cuerpo técnico requiere evaluar a los jugadores según su alcance de remate para definir la alineación titular. Seleccioné el algoritmo de ordenamiento **Merge Sort** porque garantiza una complejidad de $O(n \log n)$ en el mejor, promedio y peor de los casos, a diferencia de Bubble Sort ($O(n^2)$) o QuickSort (que puede degradarse a $O(n^2)$ si el pivote elegido no es favorable).
+El cuerpo técnico requiere evaluar a los jugadores según su alcance de remate para definir la alineación titular. Seleccioné el algoritmo de ordenamiento **Merge Sort** porque garantiza una complejidad de O(n \log n) en el mejor, promedio y peor de los casos, a diferencia de Bubble Sort O(n^2) o QuickSort (que puede degradarse a O(n^2) si el pivote elegido no es favorable).
 
 #### Algoritmos de Búsqueda Seleccionados
 1. **Búsqueda Binaria ($O(\log n)$):** Utilizada para localizar a un jugador por su ID único dividiendo el arreglo a la mitad recursivamente.
