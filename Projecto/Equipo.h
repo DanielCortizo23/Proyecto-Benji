@@ -5,23 +5,44 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include "Jugador.h"
+
 using namespace std;
 
-// Clase Equipo
+// Nodo para la Lista Doblemente Ligada
+class NodoTitular {
+    private:
+        string value;
+        NodoTitular* previous;
+        NodoTitular* next;
+
+        NodoTitular(string val) : value(val), previous(0), next(0) {}
+
+        friend class Equipo;
+};
+
 class Equipo {
     private:
         string nombre;
         string categoria;
         vector<Jugador> roster;
 
+        // Punteros de la Lista Doblemente Ligada de titulares
+        NodoTitular *head;
+        NodoTitular *tail;
+        int size_titulares;
+
         void mezclar(int, int, int);
         void merge_sort(int, int);
+        void mezclar_id(int, int, int);
+        void merge_sort_id(int, int);
         int busqueda_binaria_rec(int, int, int);
 
     public:
         Equipo();
         Equipo(string, string);
+        ~Equipo();
 
         string get_nombre();
         string get_categoria();
@@ -31,28 +52,50 @@ class Equipo {
 
         void registrar_jugador(const Jugador&);
         
-        // Archivos de texto 
         void cargar_desde_txt(string);
         void guardar_en_txt(string);
 
-        void ordenar_por_remate();             // Merge Sort O(n log n)
-        int buscar_por_id(int);                // Busqueda Binaria O(log n)
-        void filtrar_por_posicion(string);     // Busqueda Secuencial O(n)
-        double promedio_altura_bloqueo();      // Funcion Iterativa O(n)
+        void ordenar_por_remate();             
+        int buscar_por_id(int);                
+        void filtrar_por_posicion(string);     
+        double promedio_altura_bloqueo();      
 
         void mostrar_roster();
         void mostrar_resumen_jugadores();
+
+        // Metodos de la Lista Doblemente Ligada 
+        bool titulares_empty() const;
+        void limpiar_titulares();
+        void insertar_titular(string);
+        int buscar_titular(string) const;
+        void eliminar_titular_en(int);
+        string titulares_forward() const;
+        string titulares_backward() const;
+
+        // Funciones conectadas al menu
+        void agregar_titular_por_id(int);
+        void quitar_titular(string);
+        void mostrar_titulares();
 };
 
-// Desarrollo de los métodos
 Equipo::Equipo() {
     nombre = "";
     categoria = "";
+    head = 0;
+    tail = 0;
+    size_titulares = 0;
 }
 
 Equipo::Equipo(string name, string cat) {
     nombre = name;
     categoria = cat;
+    head = 0;
+    tail = 0;
+    size_titulares = 0;
+}
+
+Equipo::~Equipo() {
+    limpiar_titulares();
 }
 
 string Equipo::get_nombre() {
@@ -75,7 +118,6 @@ void Equipo::registrar_jugador(const Jugador& nuevo) {
     roster.push_back(nuevo);
 }
 
-// Lectura de archivos
 void Equipo::cargar_desde_txt(string ruta) {
     ifstream archivo(ruta);
     if (!archivo.is_open()) {
@@ -94,7 +136,6 @@ void Equipo::cargar_desde_txt(string ruta) {
     cout << "\nDatos cargados con exito desde " << ruta << " (" << roster.size() << " jugadores)." << endl;
 }
 
-// Escritura de archivos
 void Equipo::guardar_en_txt(string ruta) {
     ofstream archivo(ruta);
     if (!archivo.is_open()) {
@@ -115,7 +156,6 @@ void Equipo::guardar_en_txt(string ruta) {
     cout << "\nDatos guardados correctamente en " << ruta << endl;
 }
 
-// Función Iterativa
 double Equipo::promedio_altura_bloqueo() {
     if (roster.size() == 0) {
         return 0.0;
@@ -128,13 +168,16 @@ double Equipo::promedio_altura_bloqueo() {
     return suma / roster.size();
 }
 
-// Merge Sort
+
+// MERGE SORT (Ordenar por remate)
+// Complejidad Temporal: O(n log n)
+// Complejidad Espacial: O(n)
+
 void Equipo::mezclar(int inicio, int medio, int fin) {
     int i = inicio;
     int j = medio + 1;
     vector<Jugador> temp;
 
-    // Ordenar de mayor a menor según alcance de remate
     while (i <= medio && j <= fin) {
         if (roster[i].get_remate() >= roster[j].get_remate()) {
             temp.push_back(roster[i]);
@@ -160,7 +203,6 @@ void Equipo::mezclar(int inicio, int medio, int fin) {
     }
 }
 
-// Merge Sort recursivo O(n log n)
 void Equipo::merge_sort(int inicio, int fin) {
     if (inicio < fin) {
         int medio = (inicio + fin) / 2;
@@ -176,7 +218,49 @@ void Equipo::ordenar_por_remate() {
     }
 }
 
-// Búsqueda Binaria recursiva O(log n)
+void Equipo::mezclar_id(int inicio, int medio, int fin) {
+    int i = inicio;
+    int j = medio + 1;
+    vector<Jugador> temp;
+
+    while (i <= medio && j <= fin) {
+        if (roster[i].get_id() <= roster[j].get_id()) {
+            temp.push_back(roster[i]);
+            i++;
+        } else {
+            temp.push_back(roster[j]);
+            j++;
+        }
+    }
+
+    while (i <= medio) {
+        temp.push_back(roster[i]);
+        i++;
+    }
+
+    while (j <= fin) {
+        temp.push_back(roster[j]);
+        j++;
+    }
+
+    for (size_t k = 0; k < temp.size(); k++) {
+        roster[inicio + k] = temp[k];
+    }
+}
+
+void Equipo::merge_sort_id(int inicio, int fin) {
+    if (inicio < fin) {
+        int medio = (inicio + fin) / 2;
+        merge_sort_id(inicio, medio);
+        merge_sort_id(medio + 1, fin);
+        mezclar_id(inicio, medio, fin);
+    }
+}
+ 
+// BUSQUEDA BINARIA RECURSIVA POR ID
+// Complejidad Temporal: O(log n)
+// Complejidad Espacial: O(log n) por la pila de recursión
+
 int Equipo::busqueda_binaria_rec(int inicio, int fin, int id_buscado) {
     if (inicio > fin) {
         return -1;
@@ -196,20 +280,14 @@ int Equipo::busqueda_binaria_rec(int inicio, int fin, int id_buscado) {
 }
 
 int Equipo::buscar_por_id(int id_buscado) {
-    // Ordenamos por ID para asegurar la precondición de búsqueda binaria
-    for (size_t i = 0; i < roster.size(); i++) {
-        for (size_t j = 0; j + 1 < roster.size(); j++) {
-            if (roster[j].get_id() > roster[j + 1].get_id()) {
-                swap(roster[j], roster[j + 1]);
-            }
-        }
+    if (!roster.empty()) {
+        merge_sort_id(0, roster.size() - 1);
     }
     return busqueda_binaria_rec(0, roster.size() - 1, id_buscado);
 }
 
-// Búsqueda Secuencial O(n)
 void Equipo::filtrar_por_posicion(string pos_buscada) {
-    cout << "\nJugadores en la posicion: " << pos_buscada << endl;
+    cout << "\n--- Jugadores en la posicion: " << pos_buscada << " ---" << endl;
     int encontrados = 0;
     for (size_t i = 0; i < roster.size(); i++) {
         if (roster[i].get_posicion() == pos_buscada) {
@@ -223,7 +301,9 @@ void Equipo::filtrar_por_posicion(string pos_buscada) {
 }
 
 void Equipo::mostrar_roster() {
-    cout << "\nEquipo: " << nombre << " (" << categoria << ")" << endl;
+    cout << "\n" << endl;
+    cout << "Equipo: " << nombre << " (" << categoria << ")" << endl;
+    cout << "-------------------" << endl;
     if (roster.size() == 0) {
         cout << "El roster esta vacio." << endl;
     } else {
@@ -234,13 +314,178 @@ void Equipo::mostrar_roster() {
 }
 
 void Equipo::mostrar_resumen_jugadores() {
-    cout << "\nEquipo: " << nombre << " (" << categoria << ")" << endl;
+    cout << "\n" << endl;
+    cout << "Equipo: " << nombre << " (" << categoria << ")" << endl;
+    cout << "----------------" << endl;
     if (roster.size() == 0) {
         cout << "El roster esta vacio." << endl;
     } else {
         for (size_t i = 0; i < roster.size(); i++) {
             roster[i].mostrar_resumen();
         }
+    }
+}
+
+ 
+// IMPLEMENTACION DE LA LISTA DOBLEMENTE LIGADA (Titulares)
+
+
+// Verificar si está vacía -> O(1)
+bool Equipo::titulares_empty() const {
+    return (head == 0);
+}
+
+// Limpiar/Vaciar lista -> O(n)
+void Equipo::limpiar_titulares() {
+    NodoTitular *p = head;
+    NodoTitular *q;
+
+    while (p != 0) {
+        q = p->next;
+        delete p;
+        p = q;
+    }
+
+    head = 0;
+    tail = 0;
+    size_titulares = 0;
+}
+
+// Insertar al final usando el puntero tail -> O(1)
+void Equipo::insertar_titular(string val) {
+    NodoTitular *newLink = new NodoTitular(val);
+
+    if (titulares_empty()) {
+        head = newLink;
+        tail = newLink;
+    } else {
+        tail->next = newLink;
+        newLink->previous = tail;
+        tail = newLink;
+    }
+    size_titulares++;
+}
+
+// Buscar elemento en la lista -> O(n)
+int Equipo::buscar_titular(string val) const {
+    NodoTitular *p = head;
+    int index = 0;
+
+    while (p != 0) {
+        if (p->value == val) {
+            return index;
+        }
+        p = p->next;
+        index++;
+    }
+    return -1;
+}
+
+// Eliminar elemento por índice -> O(n)
+void Equipo::eliminar_titular_en(int index) {
+    if (index < 0 || index >= size_titulares) {
+        return;
+    }
+    NodoTitular *p;
+
+    if (index == 0) {
+        p = head;
+        if (head == tail) {
+            head = 0;
+            tail = 0;
+        } else {
+            head = head->next;
+            head->previous = 0;
+        }
+        delete p;
+    } else if (index == size_titulares - 1) {
+        p = tail;
+        tail = tail->previous;
+        tail->next = 0;
+        delete p;
+    } else {
+        p = head;
+        int pos = 0;
+        while (pos != index) {
+            p = p->next;
+            pos++;
+        }
+        p->previous->next = p->next;
+        p->next->previous = p->previous;
+        delete p;
+    }
+
+    size_titulares--;
+}
+
+// Recorrido Forward (Normal) -> O(n)
+string Equipo::titulares_forward() const {
+    stringstream aux;
+    NodoTitular *p = head;
+
+    aux << "[";
+    while (p != 0) {
+        aux << p->value;
+        if (p->next != 0) {
+            aux << ", ";
+        }
+        p = p->next;
+    }
+    aux << "]";
+    return aux.str();
+}
+
+// Recorrido Backward (Inverso) -> O(n)
+string Equipo::titulares_backward() const {
+    stringstream aux;
+    NodoTitular *p = tail;
+
+    aux << "[";
+    while (p != 0) {
+        aux << p->value;
+        if (p->previous != 0) {
+            aux << ", ";
+        }
+        p = p->previous;
+    }
+    aux << "]";
+    return aux.str();
+}
+
+void Equipo::agregar_titular_por_id(int id_buscado) {
+    int pos = buscar_por_id(id_buscado);
+    if (pos == -1) {
+        cout << "\nNo existe ningun jugador con el ID " << id_buscado << "." << endl;
+        return;
+    }
+
+    string nombre_jug = roster[pos].get_nombre();
+    if (buscar_titular(nombre_jug) != -1) {
+        cout << "\nEl jugador " << nombre_jug << " ya esta en la lista de titulares." << endl;
+        return;
+    }
+
+    insertar_titular(nombre_jug);
+    cout << "\nJugador " << nombre_jug << " agregado a la lista de titulares." << endl;
+}
+
+void Equipo::quitar_titular(string nombre_jug) {
+    int index = buscar_titular(nombre_jug);
+    if (index == -1) {
+        cout << "\nEl jugador " << nombre_jug << " no se encuentra en la lista de titulares." << endl;
+    } else {
+        eliminar_titular_en(index);
+        cout << "\nJugador " << nombre_jug << " eliminado de la lista de titulares." << endl;
+    }
+}
+
+void Equipo::mostrar_titulares() {
+    cout << "\n--- ALINEACION TITULAR (Lista Doblemente Ligada) ---" << endl;
+    if (titulares_empty()) {
+        cout << "La lista de titulares esta vacia." << endl;
+    } else {
+        cout << "Orden de rotacion (Forward):  " << titulares_forward() << endl;
+        cout << "Orden inverso (Backward):     " << titulares_backward() << endl;
     }
 }
 
