@@ -1,13 +1,13 @@
 # Catálogo de Jugadores de Voleibol
 
 Este programa funciona como un registro de los jugadores que integran un equipo de Voleibol, en el cuál se lleva un control de cada atleta y se puede desplegar un catálogo ordenado por su alcance de remate:
-* ID
-* Nombre
-* Posición
-* Bloqueo
-* Remate
-* Ataques
-* Errores
+- ID
+- Nombre
+- Posición
+- Bloqueo
+- Remate
+- Ataques
+- Errores
 
 ## SICT0302: Toma Decisiones
 #### Selección de Estructura de Datos
@@ -28,7 +28,7 @@ El vector tiene una complejidad de O(1) para consultar elementos por índice y O
 La Lista Doblemente Ligada tiene una complejidad de O(1) para verificar si está vacía e insertar titulares al final con el puntero tail, y una complejidad de O(n) para buscar, eliminar y recorrer la lista de titulares en sentido normal e inverso.
 
 #### Complejidad de los demás Componentes y Complejidad Final:
-- Búsqueda Binaria: O(log n), divide el espacio de búsqueda a la mitad.
+- Búsqueda por ID (MergeSort + Búsqueda Binaria): El algoritmo de Búsqueda Binaria tiene una complejidad de O(log n) al dividir el espacio de búsqueda a la mitad, pero como la función ordena primero el vector por ID usando MergeSort para asegurar que esté ordenado, la complejidad total de buscar por ID es O(n log n).
 - Búsqueda Secuencial: O(n), recorre la lista completa para filtrar por posición.
 - Función Iterativa (promedio bloqueo): O(n), recorre los elementos con un ciclo for.
 - Lectura y Escritura de archivos: O(n), procesa los datos de inicio a fin.
@@ -36,8 +36,8 @@ La Lista Doblemente Ligada tiene una complejidad de O(1) para verificar si está
 
 ## SICT0303: Implementa acciones científicas
 - Consulta: Permite consultar el roster completo, buscar por ID con Búsqueda Binaria, filtrar por posición y mostrar o modificar la lista de titulares.
-- Lectura de archivos: La función cargar_desde_txt lee los registros almacenados en el archivo txt.
-- Escritura de archivos: La función guardar_en_txt guarda el roster en el archivo txt para conservar la información.
+- Lectura de archivos: La función cargar_desde_txt lee los registros almacenados en el archivo txt al iniciar el programa.
+- Escritura de archivos: La función guardar_en_txt guarda el roster actualizado en el archivo txt cuando se registra un nuevo jugador en el menú.
 
 ## SEG0701: Cultura digital
 Utilizo un programa computacional para facilitar el proceso de llevar un registro de atletas y apoyar la toma de decisiones tácticas en un equipo de voleibol.
