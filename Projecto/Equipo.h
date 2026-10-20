@@ -10,16 +10,19 @@
 
 using namespace std;
 
-// Nodo para la Lista Doblemente Ligada
+// Nodo para la Lista Doblemente Ligada 
+// Clase NodoTitular 
 class NodoTitular {
-    private:
+    public:
         string value;
         NodoTitular* previous;
         NodoTitular* next;
 
-        NodoTitular(string val) : value(val), previous(0), next(0) {}
-
-        friend class Equipo;
+        NodoTitular(string val) {
+            value = val;
+            previous = 0;
+            next = 0;
+        }
 };
 
 class Equipo {
@@ -480,7 +483,7 @@ void Equipo::quitar_titular(string nombre_jug) {
 }
 
 void Equipo::mostrar_titulares() {
-    cout << "\n--- ALINEACION TITULAR (Lista Doblemente Ligada) ---" << endl;
+    cout << "\n--- ALINEACION TITULAR ---" << endl;
     if (titulares_empty()) {
         cout << "La lista de titulares esta vacia." << endl;
     } else {
