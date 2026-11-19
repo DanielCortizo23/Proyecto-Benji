@@ -11,7 +11,7 @@ Este programa funciona como un registro interactivo de los jugadores que integra
 
 ## SICT0302: Toma Decisiones
 #### Selección de Estructuras de Datos
-Utilizo un vector para almacenar el catálogo general de objetos de tipo Jugador. Esta estructura es adecuada porque permite acceso directo a cualquier posición en tiempo O(1), lo cual es necesario para dividir la lista a la mitad en la Búsqueda Binaria y en el MergeSort.
+Utilizo un vector para almacenar el catálogo general de objetos de tipo Jugador. Esta estructura es adecuada porque permite acceso directo a cualquier posición en tiempo O(1), lo cual es necesario para dividir y mezclar los elementos durante el MergeSort, así como recorrer el plantel para filtros y estadísticas.
 
 Utilizo una Lista Doblemente Ligada para guardar la alineación titular, porque permite insertar jugadores al final en tiempo O(1) usando el puntero tail, eliminar elementos dinámicamente y recorrer la rotación de titulares hacia adelante y hacia atrás con los punteros next y previous.
 
@@ -22,12 +22,12 @@ Para definir la alineación titular, el cuerpo técnico necesita evaluar el alca
 
 ## SICT0301: Evalúa los componentes
 #### Complejidad del Ordenamiento:
-El algoritmo MergeSort (ordenar_por_remate y merge_sort_id) tiene una complejidad temporal de O(n log n) en el mejor, promedio y peor caso, y una complejidad espacial de O(n), ya que divide sucesivamente el vector a la mitad y realiza un intercalado lineal usando un vector temporal.
+El algoritmo MergeSort (ordenar_por_remate, merge_sort y mezclar) tiene una complejidad temporal de O(n log n) en el mejor, promedio y peor caso, y una complejidad espacial de O(n), ya que divide sucesivamente el vector a la mitad y realiza un intercalado lineal usando un vector temporal.
 
 #### Complejidad de las Estructuras de Datos:
 - Vector (roster):
-  - Acceso por índice (mostrar_jugador_en): O(1).
-  - Inserción al final (push_back): O(1) promedio y O(n) en el peor caso cuando redimensiona memoria.
+  - Acceso por índice: O(1).
+  - Inserción al final (push_back): O(1) amortizado y O(n) en el peor caso cuando redimensiona memoria.
   - Recorridos completos (mostrar_roster, mostrar_resumen_jugadores): O(n).
 
 - Lista Doblemente Ligada (Titulares):
@@ -45,21 +45,21 @@ El algoritmo MergeSort (ordenar_por_remate y merge_sort_id) tiene una complejida
   - Recorrido ordenado por ID (mostrar_ordenados_por_id_bst / inorder), guardado inorder (guardar_inorder) y liberar memoria (limpiar_bst / removeChilds): O(n).
 
 #### Complejidad de los demás Componentes y Complejidad Final:
-- Constructores, getters y setters (Equipo, get_nombre, get_categoria, set_nombre, set_categoria): O(1).
+- Métodos de la clase Jugador (constructores, getters, setters, calcular_efectividad, mostrar_info_completa y mostrar_resumen): O(1).
+- Constructores, getters y setters de Equipo (Equipo, get_nombre, get_categoria, set_nombre, set_categoria): O(1).
 - Destructor (~Equipo): O(n), ya que llama a limpiar_titulares O(n) y limpiar_bst O(n).
-- Registrar jugador (registrar_jugador): O(log n) promedio y O(n) peor caso, al insertar en el vector O(1) y en el BST O(log n) promedio.
-- Búsqueda por ID en vector (buscar_por_id): El algoritmo de Búsqueda Binaria recursiva tiene una complejidad de O(log n), pero como la función ordena primero el vector por ID usando MergeSort para garantizar el orden, la complejidad total de buscar_por_id es O(n log n).
+- Registrar jugador (registrar_jugador): O(log n) promedio y O(n) peor caso, al insertar en el vector O(1) amortizado y en el BST O(log n) promedio.
 - Búsqueda Secuencial (filtrar_por_posicion): O(n), recorre el vector completo para filtrar por posición.
 - Función Iterativa (promedio_altura_bloqueo): O(n), recorre los elementos con un ciclo for para sumar y promediar.
-- Gestión de titulares desde menú (agregar_titular_por_id, quitar_titular, mostrar_titulares): O(n), ya que valida duplicados, busca o recorre la lista de titulares.
+- Gestión de titulares desde menú (agregar_titular_por_id, quitar_titular, mostrar_titulares): O(n), ya que busca en el BST O(log n) promedio y valida duplicados, busca o recorre la lista de titulares en O(n).
 - Lectura de archivo (cargar_desde_txt): O(n log n) promedio y O(n^2) en el peor caso teórico, porque lee los n registros del archivo txt y los inserta uno por uno en el vector y en el BST.
 - Escritura de archivos (guardar_en_txt y guardar_reporte_txt): O(n), recorre los n jugadores del vector, la lista doblemente ligada y el BST en inorder para escribirlos en los archivos txt.
 - Validaciones de entrada en main (leer_entero, leer_posicion_valida, leer_nombre_valido): O(1) por intento para números y posiciones, y O(k) para el nombre donde k es su cantidad de caracteres.
 - Menú interactivo en main: O(m * n log n) en caso promedio, donde m es la cantidad de operaciones que realice el usuario antes de salir.
-- Complejidad Final del Programa: O(n log n) en caso promedio por operación principal, determinada por el ordenamiento MergeSort, la búsqueda por ID en vector y la carga inicial de los n registros al BST (siendo O(n^2) únicamente en el peor caso teórico de cargar datos estrictamente ordenados en el BST).
+- Complejidad Final del Programa: O(n log n) en caso promedio por operación principal, determinada por el ordenamiento MergeSort y la carga inicial de los n registros al BST (siendo O(n^2) únicamente en el peor caso teórico de cargar datos estrictamente ordenados en el BST).
 
 ## SICT0303: Implementa acciones científicas
-- Consulta: Permite consultar el roster completo en el vector, buscar por ID mediante Búsqueda Binaria o directamente en el Árbol BST, listar jugadores ordenados por ID con el recorrido inorder del BST, filtrar por posición y administrar la lista doblemente ligada de titulares.
+- Consulta: Permite consultar el roster completo en el vector, buscar por ID en el Árbol BST, listar jugadores ordenados por ID con el recorrido inorder del BST, filtrar por posición y administrar la lista doblemente ligada de titulares.
 - Lectura de archivos: La función cargar_desde_txt lee los 40 registros de prueba almacenados en jugadores.txt al iniciar el programa y pobla tanto el vector como el BST.
 - Escritura de archivos: La función guardar_en_txt guarda el roster actualizado en jugadores.txt cuando se registra un nuevo jugador, y la función guardar_reporte_txt exporta a reporte_equipo.txt el estado actual de la Lista Doblemente Ligada de titulares y el recorrido inorder del Árbol BST.
 
