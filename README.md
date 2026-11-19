@@ -1,6 +1,6 @@
 # Catálogo de Jugadores de Voleibol
 
-Este programa funciona como un registro de los jugadores que integran un equipo de Voleibol, en el cuál se lleva un control de cada atleta y se puede desplegar un catálogo ordenado por su alcance de remate:
+Este programa funciona como un registro interactivo de los jugadores que integran un equipo de Voleibol, en el cuál se lleva un control de cada atleta, se puede desplegar un catálogo ordenado por alcance de remate o por ID, gestionar la alineación titular y exportar reportes a archivos de texto:
 - ID
 - Nombre
 - Posición
@@ -10,34 +10,58 @@ Este programa funciona como un registro de los jugadores que integran un equipo 
 - Errores
 
 ## SICT0302: Toma Decisiones
-#### Selección de Estructura de Datos
-Utilizo un vector para almacenar los objetos de tipo Jugador. Esta estructura es la más adecuada porque permite acceso directo a cualquier posición en tiempo O(1), lo cual es necesario para dividir la lista a la mitad en la Búsqueda Binaria y en el MergeSort.
+#### Selección de Estructuras de Datos
+Utilizo un vector para almacenar el catálogo general de objetos de tipo Jugador. Esta estructura es adecuada porque permite acceso directo a cualquier posición en tiempo O(1), lo cual es necesario para dividir la lista a la mitad en la Búsqueda Binaria y en el MergeSort.
 
-Además, utilizo una Lista Doblemente Ligada para guardar la alineación titular, porque permite insertar jugadores al final en tiempo O(1) usando el puntero tail, eliminar elementos y recorrer la rotación de titulares hacia adelante y hacia atrás con los punteros next y previous.
+Utilizo una Lista Doblemente Ligada para guardar la alineación titular, porque permite insertar jugadores al final en tiempo O(1) usando el puntero tail, eliminar elementos dinámicamente y recorrer la rotación de titulares hacia adelante y hacia atrás con los punteros next y previous.
+
+Utilizo un Árbol Binario de Búsqueda (BST) indexado por el ID del jugador como estructura no lineal. Esta estructura permite buscar jugadores rápidamente por su ID y validar si un ID ya está registrado en tiempo O(log n) promedio sin tener que volver a ordenar el vector, además de desplegar y guardar el catálogo ordenado por ID mediante el recorrido inorder.
 
 #### Algoritmo de Ordenamiento Seleccionado: MergeSort
-Para definir la alineación titular, el cuerpo técnico necesita evaluar el alcance de remate de los jugadores. Seleccioné MergeSort porque mantiene una velocidad constante de O(n log n) en el mejor, promedio y peor de los casos, evitando volverse lento como otros algoritmos.
+Para definir la alineación titular, el cuerpo técnico necesita evaluar el alcance de remate de los jugadores. Seleccioné MergeSort porque mantiene una velocidad constante de O(n log n) en el mejor, promedio y peor de los casos, evitando volverse lento como otros algoritmos cuadráticos.
 
 ## SICT0301: Evalúa los componentes
 #### Complejidad del Ordenamiento:
-El algoritmo MergeSort tiene una complejidad de O(n log n) en todos los casos, ya que divide sucesivamente el vector a la mitad y realiza un intercalado lineal.
+El algoritmo MergeSort (ordenar_por_remate y merge_sort_id) tiene una complejidad temporal de O(n log n) en el mejor, promedio y peor caso, y una complejidad espacial de O(n), ya que divide sucesivamente el vector a la mitad y realiza un intercalado lineal usando un vector temporal.
 
-#### Complejidad de la Estructura de Datos:
-El vector tiene una complejidad de O(1) para consultar elementos por índice y O(1) promedio para insertar al final con push_back.
+#### Complejidad de las Estructuras de Datos:
+- Vector (roster):
+  - Acceso por índice (mostrar_jugador_en): O(1).
+  - Inserción al final (push_back): O(1) promedio y O(n) en el peor caso cuando redimensiona memoria.
+  - Recorridos completos (mostrar_roster, mostrar_resumen_jugadores): O(n).
 
-La Lista Doblemente Ligada tiene una complejidad de O(1) para verificar si está vacía e insertar titulares al final con el puntero tail, y una complejidad de O(n) para buscar, eliminar y recorrer la lista de titulares en sentido normal e inverso.
+- Lista Doblemente Ligada (Titulares):
+  - Verificar si está vacía (titulares_empty): O(1).
+  - Inserción al final usando el puntero tail (insertar_titular): O(1).
+  - Búsqueda de un titular (buscar_titular): O(1) mejor caso, O(n) promedio y peor caso.
+  - Eliminación por índice (eliminar_titular_en): O(1) en los extremos head o tail, O(n) en posiciones intermedias.
+  - Recorridos de rotación normal e inverso (titulares_forward, titulares_backward) y liberar memoria (limpiar_titulares): O(n).
+
+- Árbol Binario de Búsqueda (BST por ID):
+  - Verificar si está vacío (bst_empty): O(1).
+  - Inserción (insertar_bst / add): O(log n) en caso promedio y O(n) en el peor caso si los IDs entran ordenados.
+  - Búsqueda y validación de ID duplicado (buscar_en_bst / existe_id_bst / find): O(1) mejor caso (en la raíz), O(log n) promedio y O(n) peor caso.
+  - Eliminación de nodo (eliminar_de_bst / remove / predecesor): O(log n) promedio y O(n) peor caso.
+  - Recorrido ordenado por ID (mostrar_ordenados_por_id_bst / inorder), guardado inorder (guardar_inorder) y liberar memoria (limpiar_bst / removeChilds): O(n).
 
 #### Complejidad de los demás Componentes y Complejidad Final:
-- Búsqueda por ID (MergeSort + Búsqueda Binaria): El algoritmo de Búsqueda Binaria tiene una complejidad de O(log n) al dividir el espacio de búsqueda a la mitad, pero como la función ordena primero el vector por ID usando MergeSort para asegurar que esté ordenado, la complejidad total de buscar por ID es O(n log n).
-- Búsqueda Secuencial: O(n), recorre la lista completa para filtrar por posición.
-- Función Iterativa (promedio bloqueo): O(n), recorre los elementos con un ciclo for.
-- Lectura y Escritura de archivos: O(n), procesa los datos de inicio a fin.
-- Complejidad Final del Programa: O(n log n), determinada por el algoritmo de ordenamiento que es la operación de mayor costo computacional.
+- Constructores, getters y setters (Equipo, get_nombre, get_categoria, set_nombre, set_categoria): O(1).
+- Destructor (~Equipo): O(n), ya que llama a limpiar_titulares O(n) y limpiar_bst O(n).
+- Registrar jugador (registrar_jugador): O(log n) promedio y O(n) peor caso, al insertar en el vector O(1) y en el BST O(log n) promedio.
+- Búsqueda por ID en vector (buscar_por_id): El algoritmo de Búsqueda Binaria recursiva tiene una complejidad de O(log n), pero como la función ordena primero el vector por ID usando MergeSort para garantizar el orden, la complejidad total de buscar_por_id es O(n log n).
+- Búsqueda Secuencial (filtrar_por_posicion): O(n), recorre el vector completo para filtrar por posición.
+- Función Iterativa (promedio_altura_bloqueo): O(n), recorre los elementos con un ciclo for para sumar y promediar.
+- Gestión de titulares desde menú (agregar_titular_por_id, quitar_titular, mostrar_titulares): O(n), ya que valida duplicados, busca o recorre la lista de titulares.
+- Lectura de archivo (cargar_desde_txt): O(n log n) promedio y O(n^2) en el peor caso teórico, porque lee los n registros del archivo txt y los inserta uno por uno en el vector y en el BST.
+- Escritura de archivos (guardar_en_txt y guardar_reporte_txt): O(n), recorre los n jugadores del vector, la lista doblemente ligada y el BST en inorder para escribirlos en los archivos txt.
+- Validaciones de entrada en main (leer_entero, leer_posicion_valida, leer_nombre_valido): O(1) por intento para números y posiciones, y O(k) para el nombre donde k es su cantidad de caracteres.
+- Menú interactivo en main: O(m * n log n) en caso promedio, donde m es la cantidad de operaciones que realice el usuario antes de salir.
+- Complejidad Final del Programa: O(n log n) en caso promedio por operación principal, determinada por el ordenamiento MergeSort, la búsqueda por ID en vector y la carga inicial de los n registros al BST (siendo O(n^2) únicamente en el peor caso teórico de cargar datos estrictamente ordenados en el BST).
 
 ## SICT0303: Implementa acciones científicas
-- Consulta: Permite consultar el roster completo, buscar por ID con Búsqueda Binaria, filtrar por posición y mostrar o modificar la lista de titulares.
-- Lectura de archivos: La función cargar_desde_txt lee los registros almacenados en el archivo txt al iniciar el programa.
-- Escritura de archivos: La función guardar_en_txt guarda el roster actualizado en el archivo txt cuando se registra un nuevo jugador en el menú.
+- Consulta: Permite consultar el roster completo en el vector, buscar por ID mediante Búsqueda Binaria o directamente en el Árbol BST, listar jugadores ordenados por ID con el recorrido inorder del BST, filtrar por posición y administrar la lista doblemente ligada de titulares.
+- Lectura de archivos: La función cargar_desde_txt lee los 40 registros de prueba almacenados en jugadores.txt al iniciar el programa y pobla tanto el vector como el BST.
+- Escritura de archivos: La función guardar_en_txt guarda el roster actualizado en jugadores.txt cuando se registra un nuevo jugador, y la función guardar_reporte_txt exporta a reporte_equipo.txt el estado actual de la Lista Doblemente Ligada de titulares y el recorrido inorder del Árbol BST.
 
 ## SEG0701: Cultura digital
-Utilizo un programa computacional para facilitar el proceso de llevar un registro de atletas y apoyar la toma de decisiones tácticas en un equipo de voleibol.
+Utilizo un programa computacional interactivo con validaciones de entrada para facilitar el registro estadístico de atletas y apoyar la toma de decisiones tácticas en un equipo de voleibol. Las validaciones evitan errores comunes del usuario como ingresar letras en campos numéricos, registrar IDs repetidos, escribir posiciones inexistentes o introducir alcances de remate menores al de bloqueo, haciendo la herramienta útil y confiable para un entorno deportivo real.
