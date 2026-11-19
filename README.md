@@ -65,3 +65,6 @@ El algoritmo MergeSort (ordenar_por_remate, merge_sort y mezclar) tiene una comp
 
 ## SEG0701: Cultura digital
 Utilizo un programa computacional interactivo con validaciones de entrada para facilitar el registro estadístico de atletas y apoyar la toma de decisiones tácticas en un equipo de voleibol. Las validaciones evitan errores comunes del usuario como ingresar letras en campos numéricos, registrar IDs repetidos, escribir posiciones inexistentes o introducir alcances de remate menores al de bloqueo, haciendo la herramienta útil y confiable para un entorno deportivo real.
+
+## Uso de IA
+Se utilizo IA para generar los 100 jugadores de prueba ubicados en el archivo .txt
