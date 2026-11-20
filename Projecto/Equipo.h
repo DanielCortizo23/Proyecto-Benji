@@ -10,18 +10,170 @@
 
 using namespace std;
 
-// Nodo para la Lista Doblemente Ligada 
-// Clase NodoTitular 
+// Nodo para la Lista Doblemente Ligada
 class NodoTitular {
     public:
         string value;
         NodoTitular* previous;
         NodoTitular* next;
 
+        // Constructor, Complejidad Temporal: O(1)
         NodoTitular(string val) {
             value = val;
             previous = 0;
             next = 0;
+        }
+};
+
+// Nodo para el Arbol Binario de Busqueda (BST) indexado por ID 
+class NodoBST {
+    public:
+        Jugador value;
+        NodoBST* left;
+        NodoBST* right;
+
+        // Constructor, Complejidad Temporal: O(1)
+        NodoBST(Jugador val) : value(val), left(0), right(0) {}
+
+        // Insertar en el BST, Promedio: O(log n), Peor caso: O(n)
+        void add(Jugador val) {
+            if (val.get_id() < value.get_id()) {
+                if (left != 0) {
+                    left->add(val);
+                } else {
+                    left = new NodoBST(val);
+                }
+            } else if (val.get_id() > value.get_id()) {
+                if (right != 0) {
+                    right->add(val);
+                } else {
+                    right = new NodoBST(val);
+                }
+            }
+        }
+
+        // Buscar por ID en el BST, Promedio: O(log n), Peor caso: O(n)
+        NodoBST* find(int id_buscado) {
+            if (id_buscado == value.get_id()) {
+                return this;
+            } else if (id_buscado < value.get_id()) {
+                if (left != 0) {
+                    return left->find(id_buscado);
+                }
+            } else {
+                if (right != 0) {
+                    return right->find(id_buscado);
+                }
+            }
+            return 0;
+        }
+
+        // Obtener predecesor (mayor del subarbol izquierdo), Promedio: O(log n), Peor caso: O(n)
+        NodoBST* predecesor() {
+            NodoBST *le = left;
+
+            if (left->right == 0) {
+                left = left->left;
+                le->left = 0;
+                return le;
+            }
+
+            NodoBST *parent = left;
+            NodoBST *child = left->right;
+            while (child->right != 0) {
+                parent = child;
+                child = child->right;
+            }
+            parent->right = child->left;
+            child->left = 0;
+            return child;
+        }
+
+        // Eliminar nodo por ID, Promedio: O(log n), Peor caso: O(n)
+        void remove(int id_borrar) {
+            NodoBST *succ, *old;
+
+            if (id_borrar < value.get_id()) {
+                if (left != 0) {
+                    if (left->value.get_id() == id_borrar) {
+                        old = left;
+                        if (old->left != 0 && old->right != 0) {
+                            succ = old->predecesor();
+                            succ->left = old->left;
+                            succ->right = old->right;
+                            left = succ;
+                        } else if (old->left != 0) {
+                            left = old->left;
+                        } else {
+                            left = old->right;
+                        }
+                        delete old;
+                    } else {
+                        left->remove(id_borrar);
+                    }
+                }
+            } else if (id_borrar > value.get_id()) {
+                if (right != 0) {
+                    if (right->value.get_id() == id_borrar) {
+                        old = right;
+                        if (old->left != 0 && old->right != 0) {
+                            succ = old->predecesor();
+                            succ->left = old->left;
+                            succ->right = old->right;
+                            right = succ;
+                        } else if (old->left != 0) {
+                            right = old->left;
+                        } else {
+                            right = old->right;
+                        }
+                        delete old;
+                    } else {
+                        right->remove(id_borrar);
+                    }
+                }
+            }
+        }
+
+        // Liberar memoria de los hijos, Complejidad Temporal: O(n)
+        void removeChilds() {
+            if (left != 0) {
+                left->removeChilds();
+                delete left;
+                left = 0;
+            }
+            if (right != 0) {
+                right->removeChilds();
+                delete right;
+                right = 0;
+            }
+        }
+
+        // Recorrido Inorder (despliega jugadores ordenados por ID) -> Complejidad Temporal: O(n)
+        void inorder() {
+            if (left != 0) {
+                left->inorder();
+            }
+            value.mostrar_resumen();
+            if (right != 0) {
+                right->inorder();
+            }
+        }
+
+        // Guardar recorrido Inorder en archivo txt -> Complejidad Temporal: O(n)
+        void guardar_inorder(ofstream &archivo) {
+            if (left != 0) {
+                left->guardar_inorder(archivo);
+            }
+            archivo << value.get_id() << " "
+                    << value.get_nombre() << " "
+                    << value.get_posicion() << " "
+                    << value.get_bloqueo() << " "
+                    << value.get_remate() << " "
+                    << value.get_ataques() << " "
+                    << value.get_errores() << "\n";
+            if (right != 0) {
+                right->guardar_inorder(archivo);
+            }
         }
 };
 
@@ -35,6 +187,9 @@ class Equipo {
         NodoTitular *head;
         NodoTitular *tail;
         int size_titulares;
+
+        // Puntero raiz del Arbol Binario de Busqueda (BST)
+        NodoBST *root_bst;
 
         void mezclar(int, int, int);
         void merge_sort(int, int);
@@ -53,20 +208,22 @@ class Equipo {
         void set_nombre(string);
         void set_categoria(string);
 
-        void registrar_jugador(const Jugador&);
-        
+        void registrar_jugador(Jugador);
+
         void cargar_desde_txt(string);
         void guardar_en_txt(string);
+        void guardar_reporte_txt(string);
 
-        void ordenar_por_remate();             
-        int buscar_por_id(int);                
-        void filtrar_por_posicion(string);     
-        double promedio_altura_bloqueo();      
+        void ordenar_por_remate();
+        int buscar_por_id(int);
+        void mostrar_jugador_en(int);
+        void filtrar_por_posicion(string);
+        double promedio_altura_bloqueo();
 
         void mostrar_roster();
         void mostrar_resumen_jugadores();
 
-        // Metodos de la Lista Doblemente Ligada 
+        // Metodos de la Lista Doblemente Ligada (Titulares)
         bool titulares_empty() const;
         void limpiar_titulares();
         void insertar_titular(string);
@@ -75,52 +232,74 @@ class Equipo {
         string titulares_forward() const;
         string titulares_backward() const;
 
-        // Funciones conectadas al menu
         void agregar_titular_por_id(int);
         void quitar_titular(string);
         void mostrar_titulares();
+
+        // Metodos del Arbol Binario de Busqueda (BST por ID)
+        bool bst_empty() const;
+        void limpiar_bst();
+        void insertar_bst(Jugador);
+        bool existe_id_bst(int);
+        void buscar_en_bst(int);
+        void eliminar_de_bst(int);
+        void mostrar_ordenados_por_id_bst();
 };
 
+// Constructor por omision O(1)
 Equipo::Equipo() {
     nombre = "";
     categoria = "";
     head = 0;
     tail = 0;
     size_titulares = 0;
+    root_bst = 0;
 }
 
+// Constructor con parametros O(1)
 Equipo::Equipo(string name, string cat) {
     nombre = name;
     categoria = cat;
     head = 0;
     tail = 0;
     size_titulares = 0;
+    root_bst = 0;
 }
 
+// Destructor (libera lista doblemente ligada y BST) O(n)
 Equipo::~Equipo() {
     limpiar_titulares();
+    limpiar_bst();
 }
 
+// Getter de nombre O(1)
 string Equipo::get_nombre() {
     return nombre;
 }
 
+// Getter de categoria O(1)
 string Equipo::get_categoria() {
     return categoria;
 }
 
+// Setter de nombre O(1)
 void Equipo::set_nombre(string name) {
     nombre = name;
 }
 
+// Setter de categoria O(1)
 void Equipo::set_categoria(string cat) {
     categoria = cat;
 }
 
-void Equipo::registrar_jugador(const Jugador& nuevo) {
+// Registrar jugador en vector O(1) amortizado y en BST O(log n) promedio / O(n) peor caso
+void Equipo::registrar_jugador(Jugador nuevo) {
     roster.push_back(nuevo);
+    insertar_bst(nuevo);
 }
 
+// Cargar jugadores desde archivo txt hacia el vector y el BST
+// Complejidad Temporal: O(n log n) promedio al insertar n nodos en el BST, O(n^2) peor caso
 void Equipo::cargar_desde_txt(string ruta) {
     ifstream archivo(ruta);
     if (!archivo.is_open()) {
@@ -129,16 +308,20 @@ void Equipo::cargar_desde_txt(string ruta) {
     }
 
     roster.clear();
+    limpiar_bst();
     int id, block, spike, pts, err;
     string name, pos;
 
     while (archivo >> id >> name >> pos >> block >> spike >> pts >> err) {
-        roster.push_back(Jugador(id, name, pos, block, spike, pts, err));
+        Jugador nuevo(id, name, pos, block, spike, pts, err);
+        roster.push_back(nuevo);
+        insertar_bst(nuevo);
     }
     archivo.close();
     cout << "\nDatos cargados con exito desde " << ruta << " (" << roster.size() << " jugadores)." << endl;
 }
 
+// Guardar el vector roster en archivo txt, Complejidad Temporal: O(n)
 void Equipo::guardar_en_txt(string ruta) {
     ofstream archivo(ruta);
     if (!archivo.is_open()) {
@@ -156,9 +339,41 @@ void Equipo::guardar_en_txt(string ruta) {
                 << roster[i].get_errores() << "\n";
     }
     archivo.close();
-    cout << "\nDatos guardados correctamente en " << ruta << endl;
+    cout << "\nDatos del roster guardados correctamente en " << ruta << endl;
 }
 
+// Guardar datos de la Lista Doblemente Ligada y del BST (inorder) en un archivo de reporte
+// Complejidad Temporal: O(n)
+void Equipo::guardar_reporte_txt(string ruta) {
+    ofstream archivo(ruta);
+    if (!archivo.is_open()) {
+        cout << "\nError al crear el archivo de reporte " << ruta << endl;
+        return;
+    }
+
+    archivo << "REPORTE DEL EQUIPO: " << nombre << " (" << categoria << ")\n";
+    archivo << "----------------------\n";
+    archivo << "ALINEACION TITULAR (Lista Doblemente Ligada):\n";
+    if (titulares_empty()) {
+        archivo << "Sin titulares asignados.\n";
+    } else {
+        archivo << "Rotacion Forward:  " << titulares_forward() << "\n";
+        archivo << "Rotacion Backward: " << titulares_backward() << "\n";
+    }
+
+    archivo << "\nCATALOGO ORDENADO POR ID (Recorrido Inorder del BST):\n";
+    archivo << "ID Nombre Posicion Bloqueo Remate Ataques Errores\n";
+    if (!bst_empty()) {
+        root_bst->guardar_inorder(archivo);
+    } else {
+        archivo << "El arbol de jugadores esta vacio.\n";
+    }
+
+    archivo.close();
+    cout << "\nReporte de estructuras guardado correctamente en " << ruta << endl;
+}
+
+// Calcular promedio de altura de bloqueo, Complejidad Temporal: O(n)
 double Equipo::promedio_altura_bloqueo() {
     if (roster.size() == 0) {
         return 0.0;
@@ -171,9 +386,8 @@ double Equipo::promedio_altura_bloqueo() {
     return suma / roster.size();
 }
 
-
-// MERGE SORT (Ordenar por remate)
-// Complejidad Temporal: O(n log n)
+// MERGE SORT (Ordenar por remate de mayor a menor)
+// Complejidad Temporal: O(n log n) en mejor, promedio y peor caso
 // Complejidad Espacial: O(n)
 
 void Equipo::mezclar(int inicio, int medio, int fin) {
@@ -221,6 +435,11 @@ void Equipo::ordenar_por_remate() {
     }
 }
 
+
+// MERGE SORT AUXILIAR (Ordenar por ID de menor a mayor)
+// Complejidad Temporal: O(n log n) en todos los casos
+// Complejidad Espacial: O(n)
+
 void Equipo::mezclar_id(int inicio, int medio, int fin) {
     int i = inicio;
     int j = medio + 1;
@@ -259,10 +478,10 @@ void Equipo::merge_sort_id(int inicio, int fin) {
         mezclar_id(inicio, medio, fin);
     }
 }
- 
+
 // BUSQUEDA BINARIA RECURSIVA POR ID
-// Complejidad Temporal: O(log n)
-// Complejidad Espacial: O(log n) por la pila de recursión
+// Complejidad Temporal de busqueda_binaria_rec: O(log n)
+// Complejidad Espacial: O(log n) por la pila de recursion
 
 int Equipo::busqueda_binaria_rec(int inicio, int fin, int id_buscado) {
     if (inicio > fin) {
@@ -282,6 +501,7 @@ int Equipo::busqueda_binaria_rec(int inicio, int fin, int id_buscado) {
     }
 }
 
+// Ordena por ID O(n log n) y luego ejecuta busqueda binaria O(log n), Total: O(n log n)
 int Equipo::buscar_por_id(int id_buscado) {
     if (!roster.empty()) {
         merge_sort_id(0, roster.size() - 1);
@@ -289,6 +509,14 @@ int Equipo::buscar_por_id(int id_buscado) {
     return busqueda_binaria_rec(0, roster.size() - 1, id_buscado);
 }
 
+// Mostrar informacion de un jugador por indice del vector O(1)
+void Equipo::mostrar_jugador_en(int pos) {
+    if (pos >= 0 && pos < (int)roster.size()) {
+        roster[pos].mostrar_info_completa();
+    }
+}
+
+// Busqueda secuencial por posicion, Complejidad Temporal: O(n)
 void Equipo::filtrar_por_posicion(string pos_buscada) {
     cout << "\n--- Jugadores en la posicion: " << pos_buscada << " ---" << endl;
     int encontrados = 0;
@@ -303,9 +531,9 @@ void Equipo::filtrar_por_posicion(string pos_buscada) {
     }
 }
 
+// Desplegar todos los jugadores con info completa, Complejidad Temporal: O(n)
 void Equipo::mostrar_roster() {
-    cout << "\n" << endl;
-    cout << "Equipo: " << nombre << " (" << categoria << ")" << endl;
+    cout << "\nEquipo: " << nombre << " (" << categoria << ")" << endl;
     cout << "-------------------" << endl;
     if (roster.size() == 0) {
         cout << "El roster esta vacio." << endl;
@@ -316,9 +544,9 @@ void Equipo::mostrar_roster() {
     }
 }
 
+// Desplegar resumen de todos los jugadores, Complejidad Temporal: O(n)
 void Equipo::mostrar_resumen_jugadores() {
-    cout << "\n" << endl;
-    cout << "Equipo: " << nombre << " (" << categoria << ")" << endl;
+    cout << "\nEquipo: " << nombre << " (" << categoria << ")" << endl;
     cout << "----------------" << endl;
     if (roster.size() == 0) {
         cout << "El roster esta vacio." << endl;
@@ -329,16 +557,15 @@ void Equipo::mostrar_resumen_jugadores() {
     }
 }
 
- 
 // IMPLEMENTACION DE LA LISTA DOBLEMENTE LIGADA (Titulares)
 
 
-// Verificar si está vacía -> O(1)
+// Verificar si esta vacia O(1)
 bool Equipo::titulares_empty() const {
     return (head == 0);
 }
 
-// Limpiar/Vaciar lista -> O(n)
+// Limpiar/Vaciar lista O(n)
 void Equipo::limpiar_titulares() {
     NodoTitular *p = head;
     NodoTitular *q;
@@ -354,7 +581,7 @@ void Equipo::limpiar_titulares() {
     size_titulares = 0;
 }
 
-// Insertar al final usando el puntero tail -> O(1)
+// Insertar al final usando el puntero tail  O(1)
 void Equipo::insertar_titular(string val) {
     NodoTitular *newLink = new NodoTitular(val);
 
@@ -369,7 +596,7 @@ void Equipo::insertar_titular(string val) {
     size_titulares++;
 }
 
-// Buscar elemento en la lista -> O(n)
+// Buscar elemento en la lista O(n)
 int Equipo::buscar_titular(string val) const {
     NodoTitular *p = head;
     int index = 0;
@@ -384,7 +611,7 @@ int Equipo::buscar_titular(string val) const {
     return -1;
 }
 
-// Eliminar elemento por índice -> O(n)
+// Eliminar elemento por indice  O(1) en extremos, O(n) en posicion intermedia
 void Equipo::eliminar_titular_en(int index) {
     if (index < 0 || index >= size_titulares) {
         return;
@@ -421,7 +648,7 @@ void Equipo::eliminar_titular_en(int index) {
     size_titulares--;
 }
 
-// Recorrido Forward (Normal) -> O(n)
+// Recorrido Forward (Normal)  O(n)
 string Equipo::titulares_forward() const {
     stringstream aux;
     NodoTitular *p = head;
@@ -438,7 +665,7 @@ string Equipo::titulares_forward() const {
     return aux.str();
 }
 
-// Recorrido Backward (Inverso) -> O(n)
+// Recorrido Backward (Inverso) O(n)
 string Equipo::titulares_backward() const {
     stringstream aux;
     NodoTitular *p = tail;
@@ -455,14 +682,20 @@ string Equipo::titulares_backward() const {
     return aux.str();
 }
 
+// Agregar titular buscando primero en el BST O(log n) promedio y revisando duplicados O(n), Total: O(n)
 void Equipo::agregar_titular_por_id(int id_buscado) {
-    int pos = buscar_por_id(id_buscado);
-    if (pos == -1) {
+    if (bst_empty()) {
+        cout << "\nNo hay jugadores cargados en el sistema." << endl;
+        return;
+    }
+
+    NodoBST *encontrado = root_bst->find(id_buscado);
+    if (encontrado == 0) {
         cout << "\nNo existe ningun jugador con el ID " << id_buscado << "." << endl;
         return;
     }
 
-    string nombre_jug = roster[pos].get_nombre();
+    string nombre_jug = encontrado->value.get_nombre();
     if (buscar_titular(nombre_jug) != -1) {
         cout << "\nEl jugador " << nombre_jug << " ya esta en la lista de titulares." << endl;
         return;
@@ -472,6 +705,7 @@ void Equipo::agregar_titular_por_id(int id_buscado) {
     cout << "\nJugador " << nombre_jug << " agregado a la lista de titulares." << endl;
 }
 
+// Quitar titular por nombre, Buscar O(n) y Eliminar O(n), Total: O(n)
 void Equipo::quitar_titular(string nombre_jug) {
     int index = buscar_titular(nombre_jug);
     if (index == -1) {
@@ -482,13 +716,108 @@ void Equipo::quitar_titular(string nombre_jug) {
     }
 }
 
+// Mostrar lista de titulares en ambos sentidos O(n)
 void Equipo::mostrar_titulares() {
-    cout << "\n--- ALINEACION TITULAR ---" << endl;
+    cout << "\n--- ALINEACION TITULAR (Lista Doblemente Ligada) ---" << endl;
     if (titulares_empty()) {
         cout << "La lista de titulares esta vacia." << endl;
     } else {
         cout << "Orden de rotacion (Forward):  " << titulares_forward() << endl;
         cout << "Orden inverso (Backward):     " << titulares_backward() << endl;
+    }
+}
+
+
+// IMPLEMENTACION DEL ARBOL BINARIO DE BUSQUEDA (BST por ID)
+
+
+// Verificar si el BST esta vacio O(1)
+bool Equipo::bst_empty() const {
+    return (root_bst == 0);
+}
+
+// Liberar toda la memoria del BST O(n)
+void Equipo::limpiar_bst() {
+    if (root_bst != 0) {
+        root_bst->removeChilds();
+        delete root_bst;
+        root_bst = 0;
+    }
+}
+
+// Insertar jugador en el BST, Promedio: O(log n), Peor caso: O(n)
+void Equipo::insertar_bst(Jugador nuevo) {
+    if (root_bst != 0) {
+        if (root_bst->find(nuevo.get_id()) == 0) {
+            root_bst->add(nuevo);
+        }
+    } else {
+        root_bst = new NodoBST(nuevo);
+    }
+}
+
+// Validar si un ID ya existe en el BST, Promedio: O(log n), Peor caso: O(n)
+bool Equipo::existe_id_bst(int id_buscado) {
+    if (root_bst != 0) {
+        return (root_bst->find(id_buscado) != 0);
+    }
+    return false;
+}
+
+// Buscar y mostrar jugador directamente desde el BST, Promedio: O(log n), Peor caso: O(n)
+void Equipo::buscar_en_bst(int id_buscado) {
+    if (bst_empty()) {
+        cout << "\nEl arbol de jugadores esta vacio." << endl;
+        return;
+    }
+
+    NodoBST *encontrado = root_bst->find(id_buscado);
+    if (encontrado != 0) {
+        cout << "\n--- Jugador encontrado en el BST ---" << endl;
+        encontrado->value.mostrar_info_completa();
+    } else {
+        cout << "\nNo se encontro ningun jugador con el ID " << id_buscado << " en el BST." << endl;
+    }
+}
+
+// Eliminar jugador del BST por ID, Promedio: O(log n), Peor caso: O(n)
+void Equipo::eliminar_de_bst(int id_borrar) {
+    if (bst_empty()) {
+        cout << "\nEl arbol esta vacio." << endl;
+        return;
+    }
+
+    if (root_bst->find(id_borrar) == 0) {
+        cout << "\nNo existe un jugador con el ID " << id_borrar << " en el BST." << endl;
+        return;
+    }
+
+    if (id_borrar == root_bst->value.get_id()) {
+        NodoBST *old = root_bst;
+        if (old->left != 0 && old->right != 0) {
+            NodoBST *succ = old->predecesor();
+            succ->left = old->left;
+            succ->right = old->right;
+            root_bst = succ;
+        } else if (old->left != 0) {
+            root_bst = old->left;
+        } else {
+            root_bst = old->right;
+        }
+        delete old;
+    } else {
+        root_bst->remove(id_borrar);
+    }
+    cout << "\nJugador con ID " << id_borrar << " eliminado del BST." << endl;
+}
+
+// Mostrar jugadores ordenados de menor a mayor ID usando Inorder O(n)
+void Equipo::mostrar_ordenados_por_id_bst() {
+    cout << "\n--- CATALOGO ORDENADO POR ID (BST Inorder) ---" << endl;
+    if (bst_empty()) {
+        cout << "El arbol de jugadores esta vacio." << endl;
+    } else {
+        root_bst->inorder();
     }
 }
 
