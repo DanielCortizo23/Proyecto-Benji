@@ -79,7 +79,7 @@ int main() {
         cout << "7.  Agregar jugador a titulares por ID (Lista Doblemente Ligada)" << endl;
         cout << "8.  Quitar jugador de titulares por nombre" << endl;
         cout << "9.  Mostrar titulares en orden normal e inverso" << endl;
-        cout << "10. Registrar nuevo jugador (con validaciones) y guardar en txt" << endl;
+        cout << "10. Registrar nuevo jugador y guardar en txt" << endl;
         cout << "11. Exportar reporte de Titulares y BST a archivo txt" << endl;
         cout << "12. Salir" << endl;
 
