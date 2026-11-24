@@ -69,11 +69,11 @@ Utilizo un programa computacional interactivo con validaciones de entrada para f
 ## Instrucciones:
 El programa corre en terminal, esta echo con c++
 
-1: - Descargar archivos
-2: - Abrir terminal
-3: - Moverse al directorio de la carpeta con cd en donde estan los archivos
-4: - Usar g++ Main.cpp -o main y despues .\/main.exe
-5: - Cerrar programa
+- Descargar archivos
+- Abrir terminal
+- Moverse al directorio de la carpeta con cd en donde estan los archivos
+- Usar g++ Main.cpp -o main y despues .\/main.exe
+- Cerrar programa
 
 ## Uso de IA
 Se utilizo IA para generar los 100 jugadores de prueba ubicados en el archivo .txt
