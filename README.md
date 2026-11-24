@@ -60,11 +60,20 @@ El algoritmo MergeSort (ordenar_por_remate, merge_sort y mezclar) tiene una comp
 
 ## SICT0303: Implementa acciones científicas
 - Consulta: Permite consultar el roster completo en el vector, buscar por ID en el Árbol BST, listar jugadores ordenados por ID con el recorrido inorder del BST, filtrar por posición y administrar la lista doblemente ligada de titulares.
-- Lectura de archivos: La función cargar_desde_txt lee los 40 registros de prueba almacenados en jugadores.txt al iniciar el programa y pobla tanto el vector como el BST.
+- Lectura de archivos: La función cargar_desde_txt lee los 100 registros de prueba almacenados en jugadores.txt al iniciar el programa y pobla tanto el vector como el BST.
 - Escritura de archivos: La función guardar_en_txt guarda el roster actualizado en jugadores.txt cuando se registra un nuevo jugador, y la función guardar_reporte_txt exporta a reporte_equipo.txt el estado actual de la Lista Doblemente Ligada de titulares y el recorrido inorder del Árbol BST.
 
 ## SEG0701: Cultura digital
 Utilizo un programa computacional interactivo con validaciones de entrada para facilitar el registro estadístico de atletas y apoyar la toma de decisiones tácticas en un equipo de voleibol. Las validaciones evitan errores comunes del usuario como ingresar letras en campos numéricos, registrar IDs repetidos, escribir posiciones inexistentes o introducir alcances de remate menores al de bloqueo, haciendo la herramienta útil y confiable para un entorno deportivo real.
+
+## Instrucciones:
+El programa corre en terminal, esta echo con c++
+
+1: - Descargar archivos
+2: - Abrir terminal
+3: - Moverse al directorio de la carpeta con cd en donde estan los archivos
+4: - Usar g++ Main.cpp -o main y despues .\/main.exe
+5: - Cerrar programa
 
 ## Uso de IA
 Se utilizo IA para generar los 100 jugadores de prueba ubicados en el archivo .txt
